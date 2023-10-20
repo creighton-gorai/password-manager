@@ -1,8 +1,29 @@
 from tkinter import *
 from tkinter import messagebox
+from random import choice, randint, shuffle
+import pyperclip
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
+def generate_password():
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+               'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+               'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+
+    password_letters = [choice(letters) for _ in range(randint(8, 10))]
+    password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
+    password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
+    password_list = password_letters + password_symbols + password_numbers
+    shuffle(password_list)
+
+    password = "".join(password_list)
+    password_input.insert(END, password)
+
+    # Copy password automatically
+    pyperclip.copy(password)
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_account():
@@ -10,9 +31,9 @@ def save_account():
         messagebox.showinfo(title="Warning: Missing fields", message="Fields must have information in it.")
     # Confirmation of information
     elif messagebox.askokcancel(title=website_input.get(), message=f"There are the details entered:"
-                                                              f"\nEmail: {eusername_input.get()}"
-                                                              f"\nPassword: {password_input.get()}"
-                                                              f"\nIs it okay to save?"):
+                                                                   f"\nEmail: {eusername_input.get()}"
+                                                                   f"\nPassword: {password_input.get()}"
+                                                                   f"\nIs it okay to save?"):
         # Save information into a pipe delimited file
         save_user_info = open("saved_passwords.txt", "a")
         save_user_info.write(website_input.get() + " | " + eusername_input.get() + " | " + password_input.get() + "\n")
@@ -56,7 +77,7 @@ password_input = Entry(width=27)
 password_input.grid(sticky=W, column=1, row=3)
 
 # Generate password button
-generate_password_button = Button(text="Generate Password", width=14)
+generate_password_button = Button(text="Generate Password", command=generate_password, width=14)
 generate_password_button.grid(sticky=E, column=1, row=3, columnspan=2)
 
 # Add button of account creation
