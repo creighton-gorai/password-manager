@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -27,21 +28,33 @@ def generate_password():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_account():
+    new_data = {website_input.get(): {
+                    "email": eusername_input.get(),
+                    "password": password_input.get()
+                }
+                }
+
     if not website_input.get() or not password_input.get():
         messagebox.showinfo(title="Warning: Missing fields", message="Fields must have information in it.")
     # Confirmation of information
-    elif messagebox.askokcancel(title=website_input.get(), message=f"There are the details entered:"
-                                                                   f"\nEmail: {eusername_input.get()}"
-                                                                   f"\nPassword: {password_input.get()}"
-                                                                   f"\nIs it okay to save?"):
-        # Save information into a pipe delimited file
-        save_user_info = open("saved_passwords.txt", "a")
-        save_user_info.write(website_input.get() + " | " + eusername_input.get() + " | " + password_input.get() + "\n")
-        save_user_info.close()
-
-        # Reset all information in the fields
-        website_input.delete(0, END)
-        password_input.delete(0, END)
+    else:
+        try:
+            with open("saved_passwords.json", "r") as data_file:
+                # Reading old data
+                data = json.load(data_file)
+        except FileNotFoundError:
+            print("Currently no file found. Creating a new file.")
+            with open("saved_passwords.json", "w") as new_data_file:
+                json.dump(new_data, new_data_file, indent=4)
+        else:
+            # Updating old data with new data
+            data.update(new_data)
+            with open("saved_passwords.json", "w") as new_data_file:
+                json.dump(data, new_data_file, indent=4)
+        finally:
+            # Reset all information in the fields
+            website_input.delete(0, END)
+            password_input.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
