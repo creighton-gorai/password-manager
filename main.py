@@ -26,6 +26,22 @@ def generate_password():
     pyperclip.copy(password)
 
 
+# ------------------------------- SEARCH ----------------------------------- #
+def search():
+    try:
+        with open("saved_passwords.json") as data_file:
+            data = json.load(data_file)
+        if website_input.get() in data.keys():
+            website_data = website_input.get()
+            eusername_data = data[website_data]["email"]
+            password_data = data[website_data]["password"]
+            messagebox.showinfo(title=website_data, message=f"Email: {eusername_data}\n"
+                                                                         f"Password: {password_data}")
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="There are currently no accounts to search for."
+                                                   "Please create an account first.")
+
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_account():
     new_data = {website_input.get(): {
@@ -72,9 +88,12 @@ canvas.grid(column=1, row=0)
 # Create website entry row
 website_label = Label(text="Website: ")
 website_label.grid(column=0, row=1)
-website_input = Entry(width=45)
+website_input = Entry(width=27)
 website_input.focus()
-website_input.grid(sticky=W, column=1, row=1, columnspan=2)
+website_input.grid(sticky=W, column=1, row=1)
+
+search_account_button = Button(text="Search", command=search, width=14)
+search_account_button.grid(sticky=E, column=1, row=1, columnspan=2)
 
 # Create email and username entry row
 eusername_label = Label(text="Email/Username: ")
